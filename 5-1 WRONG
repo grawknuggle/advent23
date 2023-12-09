@@ -1,0 +1,105 @@
+
+def listset(data):
+    res = []
+    for x in data:
+        x = set(x)
+        res.append(list(x))
+    return res
+
+def splitter(list):
+    for x in range(len(list)):
+        list[x]=list[x].split(None)
+        for y in range(len(list[x])):
+            list[x][y] = int(list[x][y])
+    return list
+
+def treesearch(seeds,list):
+    o1=[[] for r in range(len(seeds))]
+    for x in seeds:
+        for y in list:
+            start = y[1]
+            end = y[1]+y[2]
+            if x in range(start,end):
+                o = y[0]+ x - start
+                o1[seeds.index(x)].append(o)
+            else:
+                z = seeds.index(x)
+                o1[seeds.index(x)].append(x)
+    return o1
+
+def treesearch2(seeds,list):
+    o1=[[] for r in range(len(seeds))]
+    for x in seeds:
+        for z in x:
+            for y in list:
+                start = y[1]
+                end = y[1]+y[2]
+                if z in range(start,end):
+                    o = y[0]+ z - start
+                    o1[seeds.index(x)] += [o]
+                else:
+                    q = seeds.index(x)
+                    o1[seeds.index(x)] += [z]
+    return o1
+
+with open('advent/5-input.txt') as f:
+    data=f.readlines()
+
+for x in data:
+    if x.find('seed-to-soil') != -1:
+        sts = data.index(x)
+    if x.find('soil-to-fertilizer') != -1:
+        stf = data.index(x)
+    if x.find('fertilizer-to-water') != -1:
+        ftw = data.index(x)
+    if x.find('water-to-light') != -1:
+        wtl = data.index(x)
+    if x.find('light-to-temperature') != -1:
+        ltt = data.index(x)
+    if x.find('temperature-to-humidity') != -1:
+        tth = data.index(x)
+    if x.find('humidity-to-location') != -1:
+        htl = data.index(x)
+
+seeds = data[0:sts-1]
+seedToSoil = splitter(data[sts+1:stf-1])
+soilToFert = splitter(data[stf+1:ftw-1])
+fertToWater = splitter(data[ftw+1:wtl-1])
+waterToLight = splitter(data[wtl+1:ltt-1])
+lightToTemp = splitter(data[ltt+1:tth-1])
+tempToHum = splitter(data[tth+1:htl-1])
+humToLoc = splitter(data[htl+1:])
+seeds = seeds[0].split(None)
+seeds = seeds[1:]
+for x in range(len(seeds)):
+    seeds[x] = int(seeds[x])
+    
+o1 = treesearch(seeds,seedToSoil)
+o1res = listset(o1)
+#print(o1res)
+o2 = treesearch2(o1res,soilToFert)
+o2res = listset(o2)
+#print(o2res)
+o3 = treesearch2(o2res,fertToWater)
+o3res = listset(o3)
+#print(o3res)
+o4 = treesearch2(o3res,waterToLight)
+o4res = listset(o4)
+#print(o4res)
+o5 = treesearch2(o4res,lightToTemp)
+o5res = listset(o5)
+#print(o5res)
+o6 = treesearch2(o5res,tempToHum)
+o6res = listset(o6)
+#print(o6res)
+o7 = treesearch2(o6res,humToLoc)
+o7res = listset(o7)
+
+seedMin = []
+for x in o7res:
+    seed = min(x)
+    seedMin.append(seed)
+print(min(seedMin))
+#print(o7res)
+
+
